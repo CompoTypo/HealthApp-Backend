@@ -1,5 +1,5 @@
 const sqlite = require('sqlite3').verbose();
-const db = new sqlite.Database('./backend/sqlite.db');
+const db = new sqlite.Database('./sqlite.db');
 
 function end(err, result, res) {
     if (err) {
