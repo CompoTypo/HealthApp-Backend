@@ -1,0 +1,93 @@
+### FRONTEND
+
+User() {
+	private String uid;
+	private String firstname;
+	private String lastname;
+	private String uname;
+	private String email;
+    private Date dob;
+	private String sex;
+	private String race;
+    private boolean isDoctor;
+    private PatientData pd; // !!  optional, constructs safe invalid object by default
+    private MdData md; // !!  optional, constructs safe invalid object by default   
+}
+
+MdData() {
+    private String degree;
+    ArrayList<String> credentials;
+	private String specialty;
+    private ArrayList<PatientData> patients;
+}
+
+PatientData() {
+    private double height; // In Inches
+	private double weight; // In Pounds
+	private double bmi;
+	private ArrayList<DoctorData> doctors;
+    private ArrayList<Message> msgs;
+	private ArrayList<VitalsData> vitalsReadings;
+    private ArrayList<Bp> bpReadings;
+}
+
+public class VitalsData {
+	private float temp;
+	private float weight;
+    private Date vitalsTaken;
+}
+
+public class Bp {
+	private int sys;
+	private int dia;
+    private int pulse;
+    private Date bpTaken;
+}
+
+#### SQL
+
+create table users (
+    UID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Fname TEXT NOT NULL,
+    Lname TEXT NOT NULL,
+    Uname TEXT NOT NULL,
+    Email TEXT NOT NULL,
+    Hash TEXT NOT NULL,
+    DOB TEXT NOT NULL,
+	Sex TEXT,
+    Race TEXT,
+    Type TEXT NOT NULL
+);
+
+
+
+/*
+describe('Login', function () {
+    options.path = '/login';
+    options.method = 'PUT';
+    var d = '';
+    var s = 0;
+    const req = http.request(options, function (res) {
+        console.log(res.statusCode);
+        res.on('data', function (chunk) {
+            d += chunk;
+        });
+        res.on('end', function () {
+            console.log(d);
+            s = res.statusCode
+        });
+        req.write(data);
+        req.end();
+    });
+    it('promise for good status', function () {
+        console.log(s);
+        assert.equal(s, 200);
+    });
+
+    it('should return data, confirming successful login', function () {
+        console.log(d);
+        assert.equal(d, creds);
+    });
+
+});
+*/
