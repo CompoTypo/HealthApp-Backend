@@ -14,6 +14,10 @@ User() {
     private MdData md; // !!  optional, constructs safe invalid object by default   
 }
 
+Dates() {
+    private
+}
+
 MdData() {
     private String degree;
     ArrayList<String> credentials;
@@ -43,51 +47,3 @@ public class Bp {
     private int pulse;
     private Date bpTaken;
 }
-
-#### SQL
-
-create table users (
-    UID INTEGER PRIMARY KEY AUTOINCREMENT,
-	Fname TEXT NOT NULL,
-    Lname TEXT NOT NULL,
-    Uname TEXT NOT NULL,
-    Email TEXT NOT NULL,
-    Hash TEXT NOT NULL,
-    DOB TEXT NOT NULL,
-	Sex TEXT,
-    Race TEXT,
-    Type TEXT NOT NULL
-);
-
-
-
-/*
-describe('Login', function () {
-    options.path = '/login';
-    options.method = 'PUT';
-    var d = '';
-    var s = 0;
-    const req = http.request(options, function (res) {
-        console.log(res.statusCode);
-        res.on('data', function (chunk) {
-            d += chunk;
-        });
-        res.on('end', function () {
-            console.log(d);
-            s = res.statusCode
-        });
-        req.write(data);
-        req.end();
-    });
-    it('promise for good status', function () {
-        console.log(s);
-        assert.equal(s, 200);
-    });
-
-    it('should return data, confirming successful login', function () {
-        console.log(d);
-        assert.equal(d, creds);
-    });
-
-});
-*/
