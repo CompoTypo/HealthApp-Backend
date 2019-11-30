@@ -2,6 +2,7 @@ const util = require('util');
 const http = require('http');
 const fs = require('fs');
 const queries = require('./queries');
+const jwt = require('jsonwebtoken');
 const port = 8000;
 const hostname = "127.0.0.1";
 
@@ -22,7 +23,10 @@ async function _readBody(request) {
       body.push(chunk);
     }).on('end', () => {
       body = Buffer.concat(body).toString();
-      resolve(body.substring(1, body.toString().length - 1).split(",")); // trims brackets and divides each pair into . . .
+      Headers = jwt.decode(body);
+      body = jwt.verify(body, 'secret', 'complete');
+      console.log(body.info);
+      resolve(body.info.substring(1, body.info.toString().length - 1).split(",")); // trims brackets and divides each pair into . . .
     }).on('err', (err) => {
       reject(err);
     })

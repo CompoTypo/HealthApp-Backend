@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const sqlite = require('sqlite3').verbose();
 const db = new sqlite.Database('./sqlite.db');
 
@@ -8,7 +9,17 @@ function end(err, result, res) {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/plain');
         if (typeof result !== 'undefined') {
-            res.end(JSON.stringify(result));
+            let payload = {
+                info: JSON.stringify(result),
+            }
+            let sOpts = {
+                issuer: 'server',
+                subject: 'GoodReq',
+                expiresIn: '30m',
+                algorithm: 'HS256'
+            }
+            let t = jwt.sign(payload, 'secret', sOpts);
+            res.end(t.toString());
         } else {
             res.end('Account,registered');
         }
