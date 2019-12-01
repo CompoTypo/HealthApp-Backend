@@ -17,6 +17,7 @@ function sendAdminLogin(request, response) {
 }
 
 async function _readBody(request) {
+  console.log("Reading request");
   let body = [];
   return new Promise(function (resolve, reject) {
     request.on('data', (chunk) => {
@@ -34,7 +35,8 @@ async function _readBody(request) {
 }
 
 async function _processPostBody(body) {
-  keyInserts = valInserts = "";
+  console.log("Parsing post data");
+  keyInserts = valInserts = arg1 = arg2 = "";
   elArr = [];
   return new Promise(function (resolve) {
     body.forEach((element, index) => {
@@ -46,20 +48,22 @@ async function _processPostBody(body) {
       element = element.split('=' || ':'); // split the pairs, creating a 2d arr
       if (element[0] === "Uname") {
         arg1 = element[1];
+      } else if (element[0] === "Hash") {
+        arg2 = element[1];
       }
-      if (element[0].split('.')) {
-        
-      }
+
 
       keyInserts += element[0];
       valInserts += '?'; // . . . an array element
       elArr.push(element[1]);
     });
-    resolve(elArr, keyInserts, valInserts, arg1);
+    args = [arg1, arg2];
+    resolve(elArr, keyInserts, valInserts, args);
   })
 }
 
 async function _processGetBody(body) {
+  console.log("Parsing get data");
   elArr = [];
   return new Promise(function (resolve) {
     body.forEach(element => {
@@ -72,9 +76,16 @@ async function _processGetBody(body) {
 }
 
 async function processLogin(request, response) {
-  let body = await _readBody(request);
-  elArr = await _processGetBody(body);
-  queries.find("select distinct * from users where Uname=? AND Hash=?", elArr, response);
+  try {
+    let body = await _readBody(request);
+    elArr = [];
+    elArr = await _processGetBody(body);
+    await queries.find("select distinct * from users where Uname=? AND Hash=?", elArr, response);  } catch (error) {
+    console.log(error);
+    response.statusCode = 409;
+    response.setHeader('Content-Type', 'text/plain');
+    response.end("bad inputs");
+  }
   // at this point, `body` has the entire request body stored in it as a string 
 };
 
@@ -83,10 +94,10 @@ async function processLogin(request, response) {
 async function registerUser(request, response) {
   let body = await _readBody(request);
   elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
-  let isAvailable = await queries.check("select * from users where Uname=?", [arg1], response);
+  let isAvailable = await queries.check("select * from users where Uname=?", [args[0]], response);
   if (isAvailable) {
     sql = "insert into users (" + keyInserts + ") values (" + valInserts + ")";
-    queries.insert(sql, elArr, response);
+    await queries.insert(sql, elArr, response, args);
   } else {
     response.statusCode = 409;
     response.setHeader('Content-Type', 'text/plain');
@@ -99,10 +110,10 @@ async function addLog(request, response) {
   keyInserts = valInserts = arg1 = "";
   elArr = [];
   elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
-  let isAvailable = await queries.check("select * from users where Uname=?", [arg1], response);
+  let isAvailable = await queries.check("select * from users where Uname=?", [args[0]], response);
   if (isAvailable) {
     sql = "insert into vitals (" + keyInserts + ") values (" + valInserts + ")";
-    queries.insert(sql, elArr, response);
+    await queries.insert(sql, elArr, response, args);
   } else {
     response.statusCode = 409;
     response.setHeader('Content-Type', 'text/plain');
@@ -111,11 +122,29 @@ async function addLog(request, response) {
 // at this point, `body` has the entire request body stored in it as a string 
 };
 
+async function getLogs(request, response) {
+  try {
+    let body = await _readBody(request);
+    console.log("so far so good");
+    elArr = [];
+    elArr = await _processGetBody(body);
+    await queries.find("select * from vitals where Hash=?", [elArr[1]], response);  
+  } catch (error) {
+    console.log(error);
+    response.statusCode = 409;
+    response.setHeader('Content-Type', 'text/plain');
+    response.end("bad inputs");
+  }
+
+  // at this point, `body` has the entire request body stored in it as a string 
+};
+
 const server = http.createServer((req, res) => {
   if (req.method == 'GET') {
-    sendAdminLogin(req, res);
-    //if (req.headers.host === hostname + ":" + port) {
-    //}
+    if (req.url === '/ref') {
+      getLogs(req, res);
+    }
+    //sendAdminLogin(req, res);
   } else if (req.method == 'PUT') {
     if (req.url === '/login') {
       processLogin(req, res);
