@@ -80,7 +80,8 @@ async function processLogin(request, response) {
     let body = await _readBody(request);
     elArr = [];
     elArr = await _processGetBody(body);
-    await queries.find("select distinct * from users where Uname=? AND Hash=?", elArr, response);  } catch (error) {
+    await queries.find("select distinct * from users where Uname=? AND Hash=?", elArr, response);
+  } catch (error) {
     console.log(error);
     response.statusCode = 409;
     response.setHeader('Content-Type', 'text/plain');
@@ -119,7 +120,7 @@ async function addLog(request, response) {
     response.setHeader('Content-Type', 'text/plain');
     response.end("Username is already in use");
   }
-// at this point, `body` has the entire request body stored in it as a string 
+  // at this point, `body` has the entire request body stored in it as a string 
 };
 
 async function getLogs(request, response) {
@@ -128,7 +129,7 @@ async function getLogs(request, response) {
     console.log("so far so good");
     elArr = [];
     elArr = await _processGetBody(body);
-    await queries.find("select * from vitals where Hash=?", [elArr[1]], response);  
+    await queries.find("select * from vitals where Hash=?", [elArr[1]], response);
   } catch (error) {
     console.log(error);
     response.statusCode = 409;
@@ -141,12 +142,12 @@ async function getLogs(request, response) {
 
 const server = http.createServer((req, res) => {
   if (req.method == 'GET') {
-    if (req.url === '/ref') {
-      getLogs(req, res);
-    }
     //sendAdminLogin(req, res);
   } else if (req.method == 'PUT') {
-    if (req.url === '/login') {
+    if (req.url === '/ref') {
+      console.log(req.url);
+      getLogs(req, res);
+    } else if (req.url === '/login') {
       processLogin(req, res);
     }
   } else if (req.method === 'POST') {
