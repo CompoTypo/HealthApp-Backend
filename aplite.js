@@ -33,48 +33,82 @@ async function _readBody(request) {
   });
 }
 
-async function processLogin(request, response) {
-  let body = await _readBody(request);
+async function _processPostBody(body) {
+  keyInserts = valInserts = "";
   elArr = [];
-  try {
+  return new Promise(function (resolve) {
+    body.forEach((element, index) => {
+      if (index !== 0) {
+        keyInserts += ', ';
+        valInserts += ', ';
+      }
+      element = element.replace(/\s+/g, ''); // get rid of whitespace
+      element = element.split('=' || ':'); // split the pairs, creating a 2d arr
+      if (element[0] === "Uname") {
+        arg1 = element[1];
+      }
+      if (element[0].split('.')) {
+        
+      }
+
+      keyInserts += element[0];
+      valInserts += '?'; // . . . an array element
+      elArr.push(element[1]);
+    });
+    resolve(elArr, keyInserts, valInserts, arg1);
+  })
+}
+
+async function _processGetBody(body) {
+  elArr = [];
+  return new Promise(function (resolve) {
     body.forEach(element => {
       element = element.replace(/\s+/g, ''); // get rid of whitespace
       element = element.split('=' || ':'); // split the pairs, creating a 2d arr
-      elArr.push(element); // . . . an array element
-    });
-    queries.find("select distinct * from users where Uname=? AND Hash=?", [elArr[0][1], elArr[1][1]], response);
-  } catch (err) {
-    console.log(err);
-  }
+      elArr.push(element[1]); // . . . an array element
+    })
+    resolve(elArr);
+  });
+}
+
+async function processLogin(request, response) {
+  let body = await _readBody(request);
+  elArr = await _processGetBody(body);
+  queries.find("select distinct * from users where Uname=? AND Hash=?", elArr, response);
   // at this point, `body` has the entire request body stored in it as a string 
 };
 
+
+
 async function registerUser(request, response) {
-  keyInserts = valInserts = "";
   let body = await _readBody(request);
-  elArr = [];
-  let arg1;
-  body.forEach((element, index) => {
-    if (index !== 0) {
-      keyInserts += ', ';
-      valInserts += ', ';
-    }
-    element = element.replace(/\s+/g, ''); // get rid of whitespace
-    element = element.split('='); // split the pairs, creating a 2d arr
-    if (element[0] === "Uname") { arg1 = element[1]; }
-    keyInserts += element[0];
-    valInserts += '?'; // . . . an array element
-    elArr.push(element[1]);
-  });
+  elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
   let isAvailable = await queries.check("select * from users where Uname=?", [arg1], response);
   if (isAvailable) {
     sql = "insert into users (" + keyInserts + ") values (" + valInserts + ")";
-    await queries.insert(sql, elArr, response);
+    queries.insert(sql, elArr, response);
   } else {
     response.statusCode = 409;
     response.setHeader('Content-Type', 'text/plain');
     response.end("Username is already in use");
   }
+};
+
+async function addLog(request, response) {
+  let body = await _readBody(request);
+  keyInserts = valInserts = arg1 = "";
+  elArr = [];
+  elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
+  let isAvailable = await queries.check("select * from users where Uname=?", [arg1], response);
+  if (isAvailable) {
+    sql = "insert into vitals (" + keyInserts + ") values (" + valInserts + ")";
+    queries.insert(sql, elArr, response);
+  } else {
+    response.statusCode = 409;
+    response.setHeader('Content-Type', 'text/plain');
+    response.end("Username is already in use");
+  }
+// at this point, `body` has the entire request body stored in it as a string 
 };
 
 const server = http.createServer((req, res) => {
@@ -89,6 +123,8 @@ const server = http.createServer((req, res) => {
   } else if (req.method === 'POST') {
     if (req.url === '/register') {
       registerUser(req, res);
+    } else if (req.url === '/log') {
+      addLog(req, res);
     }
   } else if (req.method === 'DELETE') {}
 

@@ -13,8 +13,6 @@ create table users (
     Type TEXT NOT NULL
 );
 
-insert into vitals.Wght, 
-
 create table doctorinfo (
     Hash TEXT NOT NULL,
     License TEXT NOT NULL,
@@ -47,29 +45,22 @@ create table msgs (
 
 create table bp (
     Hash TEXT NOT NULL,
- 
+    Sys INTEGER NOT NULL,    
+    Dia INTEGER NOT NULL,    
+    Pulse INTEGER NOT NULL, 
     RTime INTEGER NOT NULL    
 );
 
 create table vitals (
-    Hash TEXT NOT NULL,
-    Temp REAL,    
-    Wght Real,   
-    Sys INTEGER,    
-    Dia INTEGER,    
-    Pulse INTEGER, 
-    RTime INTEGER NOT NULL    
-);
-
-
-# edges connecting users and describing it
-create table relations (
     Hash TEXT NOT NULL,
     Temp REAL NOT NULL,    
     Wght Real NOT NULL,    
     RTime INTEGER NOT NULL    
 );
 
-SELECT users.Fname, users.Lname
-FROM users
-INNER JOIN users ON users.CustomerID=Customers.CustomerID;
+create table relations (
+    Hash TEXT NOT NULL,
+    Temp REAL NOT NULL,    
+    Wght Real NOT NULL,    
+    RTime INTEGER NOT NULL    
+);
