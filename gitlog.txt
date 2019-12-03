@@ -1,0 +1,47 @@
+commit b4fee365b63f541de5f09736dec0bed1c74e4fd8
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Sun Dec 1 13:14:14 2019 -0600
+
+    Part of frontend full path for logs. Logs get delivered
+
+commit 440c06bde1279687944a1b35290aa805a0354c9e
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Sun Dec 1 12:17:44 2019 -0600
+
+    Backend can complete all transactions well. getLogs implemented and ready for frontend use
+
+commit a88aa4dfbbf1109c2105f61245721513d2f8bc5e
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Sun Dec 1 07:00:03 2019 -0600
+
+    2 tables condensed into 1, queries refactored for better responses to client
+
+commit 69660c28f9287e0292d3d9e85aa4f7833a169afc
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Fri Nov 29 22:41:02 2019 -0600
+
+    JWT fully implemented
+
+commit efe8d9660e2ed0ade8b35bb761ad0d1a8656f679
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Mon Nov 25 21:37:28 2019 -0600
+
+    Added tables to db
+
+commit dab223c7993173fc6c730b81c4db8550cbbcdc34
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Sat Nov 16 17:19:42 2019 -0600
+
+    commiting tables reference
+
+commit 496f22e70f78659d1b77f9fb63d0ec3bb48aeab1
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Fri Nov 15 14:32:29 2019 -0600
+
+    updated dependency
+
+commit bd5865f3160c80cf1ced78c5b37c238de6fddeb4
+Author: DoggyBagBrunch <andrew.ja.jensen48@gmail.com>
+Date:   Fri Nov 15 14:12:08 2019 -0600
+
+    fc, splitting backend off from total project for easier deployment and maintenance

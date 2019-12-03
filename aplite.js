@@ -90,26 +90,31 @@ async function processLogin(request, response) {
   // at this point, `body` has the entire request body stored in it as a string 
 };
 
-
-
 async function registerUser(request, response) {
-  let body = await _readBody(request);
-  elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
-  let isAvailable = await queries.check("select * from users where Uname=?", [args[0]], response);
-  if (isAvailable) {
-    sql = "insert into users (" + keyInserts + ") values (" + valInserts + ")";
-    await queries.insert(sql, elArr, response, args);
-  } else {
+  try {
+    let body = await _readBody(request);
+    elArr = keyInserts = valInserts = [];
+    elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
+    let isAvailable = await queries.check("select * from users where Uname=?", [args[0]], response);
+    if (isAvailable) {
+      sql = "insert into users (" + keyInserts + ") values (" + valInserts + ")";
+      await queries.insert(sql, elArr, response, args);
+    } else {
+      response.statusCode = 409;
+      response.setHeader('Content-Type', 'text/plain');
+      response.end("Username is already in use");
+    }
+  } catch (err) {
+    console.log(err);
     response.statusCode = 409;
     response.setHeader('Content-Type', 'text/plain');
-    response.end("Username is already in use");
+    response.end("bad inputs");
   }
 };
-
 async function addLog(request, response) {
   let body = await _readBody(request);
-  keyInserts = valInserts = arg1 = "";
-  elArr = [];
+  arg1 = "";
+  keyInserts = valInserts = elArr = [];
   elArr, keyInserts, valInserts, arg1 = await _processPostBody(body);
   let isAvailable = await queries.check("select * from users where Uname=?", [args[0]], response);
   if (isAvailable) {
@@ -129,14 +134,13 @@ async function getLogs(request, response) {
     console.log("so far so good");
     elArr = [];
     elArr = await _processGetBody(body);
-    await queries.find("select * from vitals where Hash=?", [elArr[1]], response);
+    await queries.find("select all * from vitals where Hash=?", [elArr[1]], response);
   } catch (error) {
     console.log(error);
     response.statusCode = 409;
     response.setHeader('Content-Type', 'text/plain');
     response.end("bad inputs");
   }
-
   // at this point, `body` has the entire request body stored in it as a string 
 };
 
